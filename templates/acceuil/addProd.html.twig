@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello AcceuilController!{% endblock %}
+
+{% block body %}
+  <h1>Ajouter un Produit</h1>
+  
+    {{ form_start(form) }}
+      <div class="form-group">
+        {{ form_label(form.Nom) }}
+        {{ form_widget(form.Nom) }}
+      </div>
+      <div class="form-group">
+        {{ form_label(form.Description) }}
+        {{ form_widget(form.Description) }}
+      </div>
+      <div class="form-group">
+        {{ form_label(form.Prix) }}
+        {{ form_widget(form.Prix) }}
+      </div>
+      <div class="form-group">
+        {{ form_label(form.Stock) }}
+        {{ form_widget(form.Stock) }}
+      </div>
+      <div class="form-group">
+        {{ form_label(form.Photo) }}
+        {{ form_widget(form.Photo) }}
+      </div>
+      
+    <button class="btn btn-primary">
+        Ajouter
+    </button>
+    {{ form_end(form) }}
+{% endblock %}

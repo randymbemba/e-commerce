@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello AcceuilController!{% endblock %}
+
+{% block body %}
+  <main role="main" class="container">
+    {% for produit in produits %}
+      {{produit.nom}}
+    {% endfor %}
+  </main>
+{% endblock %}

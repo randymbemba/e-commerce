@@ -1,20 +1,32 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello AcceuilController!{% endblock %}
+{% block title %}Les produits
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="bg-light p-3">
+        <h1>Les produits</h1>
+    </div>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <div class="row">
+        {% for product in products %}
+            <div class="col-4 mt-4">
+                <div class="border border-dark rounded p-2 clearfix">
+                    <h2>
+                        {{ product.title }}
+                        -
+                        {{ product.price }}
+                        €
+                    </h2>
+                    <img class="img-fluid rounded" src="{{ product.image }}" alt="Image de {{ product.title }}">
+                    <hr>
+                    <a href="#" class="btn btn-success float-right">
+                        <i class="fas fa-shopping-cart mr-1"></i>
+                        Ajouter
+                    </a>
+                </div>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/Users/33698/E-commerce/src/Controller/AcceuilController.php'|file_link(0) }}">src/Controller/AcceuilController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/Users/33698/E-commerce/templates/acceuil/index.html.twig'|file_link(0) }}">templates/acceuil/index.html.twig</a></code></li>
-    </ul>
-</div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

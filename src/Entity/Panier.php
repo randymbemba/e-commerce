@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PanierRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PanierRepository::class)]
@@ -13,33 +15,28 @@ class Panier
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\OneToOne(targetEntity: Utilisateur::class, cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private $Utilisateur;
-
     #[ORM\Column(type: 'datetime')]
     private $DateAchat;
 
     #[ORM\Column(type: 'boolean')]
     private $Etat;
 
+    #[ORM\OneToMany(mappedBy: 'Panier', targetEntity: ContenuPanier::class)]
+    private $contenuPaniers;
+
+    #[ORM\OneToOne(targetEntity: Utilisateur::class, cascade: ['persist', 'remove'])]
+    private $Utilisateur;
+
+    public function __construct()
+    {
+        $this->contenuPaniers = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
-
-    public function getUtilisateur(): ?Utilisateur
-    {
-        return $this->Utilisateur;
-    }
-
-    public function setUtilisateur(Utilisateur $Utilisateur): self
-    {
-        $this->Utilisateur = $Utilisateur;
-
-        return $this;
-    }
-
+    
     public function getDateAchat(): ?\DateTimeInterface
     {
         return $this->DateAchat;
@@ -60,6 +57,48 @@ class Panier
     public function setEtat(bool $Etat): self
     {
         $this->Etat = $Etat;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ContenuPanier[]
+     */
+    public function getContenuPaniers(): Collection
+    {
+        return $this->contenuPaniers;
+    }
+
+    public function addContenuPanier(ContenuPanier $contenuPanier): self
+    {
+        if (!$this->contenuPaniers->contains($contenuPanier)) {
+            $this->contenuPaniers[] = $contenuPanier;
+            $contenuPanier->setPanier($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContenuPanier(ContenuPanier $contenuPanier): self
+    {
+        if ($this->contenuPaniers->removeElement($contenuPanier)) {
+            // set the owning side to null (unless already changed)
+            if ($contenuPanier->getPanier() === $this) {
+                $contenuPanier->setPanier(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->Utilisateur;
+    }
+
+    public function setUtilisateur(?Utilisateur $Utilisateur): self
+    {
+        $this->Utilisateur = $Utilisateur;
 
         return $this;
     }

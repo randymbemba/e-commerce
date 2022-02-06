@@ -4,16 +4,16 @@
 
 {% block body %}
   <main role="main" class="container">
-    <h1>Ajouter un Produit</h1>
-    <br>
-      {{ form_start(form) }}
-        
-      {{ include('acceuil/_form.html.twig') }}
+    <h1>Modifier un Produit</h1>
+    
+    {{ form_start(form) }}
+      
+    {{ include('acceuil/_form.html.twig') }}
         
       <button class="btn btn-primary">
-          Ajouter
+          Modifier
       </button>
       
-      {{ form_end(form) }}
+    {{ form_end(form) }}
   </main> 
 {% endblock %}

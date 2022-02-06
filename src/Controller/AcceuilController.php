@@ -13,20 +13,38 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AcceuilController extends AbstractController
 {
+
     #[Route('/', name: 'acceuil')]
     public function index(ProduitRepository $produitRepository): Response
     {
         return $this->render('acceuil/index.html.twig', [
-            'controller_name' => 'AcceuilController',
-            'produits' => $produitRepository->findBy(['id' => 1]),
+            'produits' => $produitRepository->findAll(),
         ]);
     }
 
-    #[Route('/displayProd', name: 'displayProd')]
-    public function display(ProduitRepository $produitRepository): Response
+
+    #[Route('/{id}/editProd', name: 'editProd', methods: ['GET', 'POST'])]
+    public function edit(Produit $produit, Request $request,EntityManagerInterface $entityManager): Response
     {
-        return $this->render('acceuil/displayProd.html.twig', [
-            'produits' => $produitRepository->findBy(['id' => 0]),
+        $form = $this->createForm(ProduitType::class, $produit);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+            $this->addFlash(
+                'success',
+                '<i data-feather="check"></i> Le produit a bien été mofifier'
+            );
+            return $this->redirectToRoute('acceuil', [], Response::HTTP_SEE_OTHER);
+        }
+        else{
+            $this->addFlash(
+                'danger',
+                'Le produit n\'a pas été modifié'
+            ); 
+        }
+        return $this->render('acceuil/editProd.html.twig', [
+            "form" => $form->createView(),
         ]);
     }
 
@@ -37,16 +55,52 @@ class AcceuilController extends AbstractController
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
         
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
 
-            $entityManager->persist($produit);
-            $entityManager->flush();
+            if ($form->isValid()){
+                $entityManager->persist($produit);
+                $entityManager->flush();
+                $this->addFlash(
+                    'success',
+                    'Le produit a été ajouté'
+                );
 
-            return $this->redirectToRoute('acceuil', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('acceuil', [], Response::HTTP_SEE_OTHER);
+            }
+            else{
+                $this->addFlash(
+                    'danger',
+                    'Le produit n\'a pas été ajouté'
+                ); 
+            }
         }
 
         return $this->renderForm('acceuil/addProd.html.twig', [
             "form" => $form,
         ]);
+    }
+
+    #[Route('/{id}/deleteProd', name: 'deleteProd')]
+    public function delete(Produit $produit, Request $request,EntityManagerInterface $entityManager): Response
+    {
+        if ($produit) {
+            $entityManager->remove($produit);
+            $entityManager->flush();
+            $this->addFlash(
+                'success',
+                'Le produit a été supprimé'
+            ); 
+
+            return $this->redirectToRoute('acceuil');
+        }
+        else{
+            $this->addFlash(
+                'danger',
+                'Le produit n\'a pas été supprimer'
+            ); 
+
+            return $this->redirectToRoute('acceuil');
+        }
+
     }
 }

@@ -5,8 +5,10 @@ namespace App\Form;
 use App\Entity\Produit;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class ProduitType extends AbstractType
 {
@@ -33,7 +35,7 @@ class ProduitType extends AbstractType
                     "class" => "form-control"
                 ]
             ])
-            ->add('Photo', TextType::class, [
+            ->add('Photo', FileType::class, [
                 "attr" => [
                     "class" => "form-control"
                 ]

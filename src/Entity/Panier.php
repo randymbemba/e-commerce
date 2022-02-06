@@ -24,8 +24,8 @@ class Panier
     #[ORM\OneToMany(mappedBy: 'Panier', targetEntity: ContenuPanier::class)]
     private $contenuPaniers;
 
-    #[ORM\OneToOne(targetEntity: Utilisateur::class, cascade: ['persist', 'remove'])]
-    private $Utilisateur;
+    #[ORM\OneToOne(targetEntity: User::class, cascade: ['persist', 'remove'])]
+    private $user;
 
     public function __construct()
     {
@@ -91,14 +91,14 @@ class Panier
         return $this;
     }
 
-    public function getUtilisateur(): ?Utilisateur
+    public function getUser(): ?User
     {
-        return $this->Utilisateur;
+        return $this->user;
     }
 
-    public function setUtilisateur(?Utilisateur $Utilisateur): self
+    public function setUser(?User $user): self
     {
-        $this->Utilisateur = $Utilisateur;
+        $this->user = $user;
 
         return $this;
     }

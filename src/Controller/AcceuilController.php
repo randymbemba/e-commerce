@@ -7,9 +7,12 @@ use App\Form\ProduitType;
 use App\Repository\ProduitRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class AcceuilController extends AbstractController
 {
@@ -49,7 +52,7 @@ class AcceuilController extends AbstractController
     }
 
     #[Route('/ajoueProd', name: 'ajoueProd')]
-    public function add(Request $request,EntityManagerInterface $entityManager): Response
+    public function add(Request $request,EntityManagerInterface $entityManager,SluggerInterface $slugger): Response
     {
         $produit = new Produit();
         $form = $this->createForm(ProduitType::class, $produit);
@@ -58,6 +61,31 @@ class AcceuilController extends AbstractController
         if ($form->isSubmitted()) {
 
             if ($form->isValid()){
+
+                $imageFile = $form->get('Photo')->getData();
+
+                // this condition is needed because the 'brochure' field is not required
+                // so the PDF file must be processed only when a file is uploaded
+                if ($imageFile) {
+                    $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                    // this is needed to safely include the file name as part of the URL
+                    $safeFilename = $slugger->slug($originalFilename);
+                    $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile;
+
+                    // Move the file to the directory where brochures are stored
+                    try {
+                        $imageFile->move(
+                            $this->getParameter('images_destination'),
+                            $newFilename
+                        );
+                    } catch (FileException $e) {
+                        // ... handle exception if something happens during file upload
+                    }
+
+                    // updates the 'brochureFilename' property to store the PDF file name
+                    // instead of its contents
+                    $produit->setPhoto($newFilename);
+                }
                 $entityManager->persist($produit);
                 $entityManager->flush();
                 $this->addFlash(

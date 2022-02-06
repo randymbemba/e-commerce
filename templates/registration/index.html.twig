@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+    <main role="main" class="container">
+    <h1>Inscription</h1>
+    <br>
+      {{ form_start(form) }}
+
+        <div class="form-group">
+        {{ form_row(form) }}
+        </div>
+
+      <button class="btn btn-primary">
+          Ajouter
+      </button>
+      
+      {{ form_end(form) }}
+  </main> 
+{% endblock %}
